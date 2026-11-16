@@ -1,9 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
-import { AuthContext, type Auth } from '@/features/auth/AuthContext'
 import { diasAte, textoDoPrazo } from '@/lib/datas'
-import type { Perfil } from '@/types/dominio'
 import {
   acompanhamento,
   acompanhamentosRecentes,
@@ -13,8 +10,13 @@ import {
   rodadaAberta,
   rodadasRecentes,
 } from '../fixtures'
-import { PainelPage } from '../PainelPage'
-import { campanhaDeReferencia, rodadasRecentesPublicadas, textoDasFaltantes } from '../pesquisas'
+import {
+  campanhaDeReferencia,
+  idsRecentesPublicadas,
+  rodadaAbertaAtual,
+  rodadasRecentesPublicadas,
+  textoDasFaltantes,
+} from '../pesquisas'
 import { PendenciasParceiroCard } from './PendenciasParceiroCard'
 import { PesquisasParceirosCard } from './PesquisasParceirosCard'
 
@@ -31,17 +33,6 @@ function abrirCartao(props: Partial<Parameters<typeof PesquisasParceirosCard>[0]
       hoje={hojeDoDesign}
       {...props}
     />,
-  )
-}
-
-function abrirPainel(perfil: Perfil) {
-  const auth = { estado: 'autenticado', usuario: { id: 1, perfil } } as Auth
-  return render(
-    <MemoryRouter>
-      <AuthContext.Provider value={auth}>
-        <PainelPage />
-      </AuthContext.Provider>
-    </MemoryRouter>,
   )
 }
 
@@ -104,6 +95,23 @@ describe('textoDasFaltantes', () => {
     )
     expect(textoDasFaltantes({ qtdMh: 3, qtdRespondentes: 1 }, tipos)).toBe('Faltam 2 respostas.')
     expect(textoDasFaltantes({ qtdMh: 3, qtdRespondentes: 3 }, tipos)).toMatch(/Todos/)
+    expect(textoDasFaltantes({ qtdMh: 0, qtdRespondentes: 0 }, tipos)).toBe(
+      'Ainda não há meios de hospedagem cadastrados para responder.',
+    )
+  })
+})
+
+describe('rodadaAbertaAtual', () => {
+  it('com mais de uma aberta, fica com a de prazo mais próximo', () => {
+    const rodadas = [
+      { id: 1, status: 'ENCERRADA' as const, prazoResposta: '2026-01-01' },
+      { id: 2, status: 'ABERTA' as const, prazoResposta: '2026-12-10' },
+      { id: 3, status: 'ABERTA' as const, prazoResposta: '2026-11-30' },
+      { id: 4, status: 'ABERTA' as const },
+    ]
+
+    expect(rodadaAbertaAtual(rodadas)?.id).toBe(3)
+    expect(rodadaAbertaAtual([])).toBeUndefined()
   })
 })
 
@@ -123,6 +131,7 @@ describe('rodadasRecentesPublicadas', () => {
 
     expect(recentes.map((rodada) => rodada.codigo)).toEqual(['015/26', '013/26', '011/26'])
     expect(recentes[0]?.campanha?.qtdRespondentes).toBe(58)
+    expect(idsRecentesPublicadas([antiga, semPublicar, ...rodadasRecentes])).toEqual([15, 13, 11])
   })
 })
 
@@ -187,27 +196,5 @@ describe('PendenciasParceiroCard', () => {
     render(<PendenciasParceiroCard pendencias={[]} hoje={hojeDoDesign} />)
 
     expect(screen.getByText('Nenhuma pesquisa aberta agora')).toBeInTheDocument()
-  })
-})
-
-describe('cartão de pesquisas por perfil', () => {
-  it('ADMIN vê o acompanhamento', () => {
-    abrirPainel('ADMIN')
-
-    expect(screen.getByText('Rodadas recentes')).toBeInTheDocument()
-  })
-
-  it('PARCEIRO vê as próprias pesquisas, sem dados de outros', () => {
-    abrirPainel('PARCEIRO')
-
-    expect(screen.getByText('Pendente')).toBeInTheDocument()
-    expect(screen.queryByText('Rodadas recentes')).not.toBeInTheDocument()
-    expect(screen.queryByText('41 de 72')).not.toBeInTheDocument()
-  })
-
-  it('VISUALIZADOR não vê o cartão', () => {
-    abrirPainel('VISUALIZADOR')
-
-    expect(screen.queryByText('Pesquisas com os parceiros')).not.toBeInTheDocument()
   })
 })

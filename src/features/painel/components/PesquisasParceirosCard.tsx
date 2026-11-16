@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { IconeCheck, IconeRelogio } from '@/components/icons'
 import { Badge } from '@/components/ui/Badge'
 import { BarraProgresso } from '@/components/ui/BarraProgresso'
@@ -18,6 +19,10 @@ type PesquisasParceirosCardProps = {
   tipos: Esquemas['TipoRef'][]
   /** "2026-10-05" */
   hoje: string
+  /** o acompanhamento da rodada aberta falhou: o cartão avisa em vez de esconder o progresso */
+  acompanhamentoIndisponivel?: boolean
+  /** ação do estado vazio, como levar à criação de uma pesquisa */
+  acaoSemRodada?: ReactNode
 }
 
 const EM_CONSTRUCAO = 'Em construção'
@@ -51,7 +56,11 @@ function RodadaAberta({
   acompanhamento,
   tipos,
   hoje,
-}: Pick<PesquisasParceirosCardProps, 'acompanhamento' | 'tipos' | 'hoje'> & {
+  acompanhamentoIndisponivel,
+}: Pick<
+  PesquisasParceirosCardProps,
+  'acompanhamento' | 'tipos' | 'hoje' | 'acompanhamentoIndisponivel'
+> & {
   rodada: Esquemas['RodadaResponse']
 }) {
   const campanha = campanhaDeReferencia(acompanhamento)
@@ -83,6 +92,9 @@ function RodadaAberta({
           <p className={styles.faltantes}>{textoDasFaltantes(campanha, tipos)}</p>
         </>
       )}
+      {!campanha && acompanhamentoIndisponivel && (
+        <p className={styles.faltantes}>Não foi possível carregar as respostas desta rodada.</p>
+      )}
 
       <div className={styles.acoes}>
         <Button variante="secundaria" disabled title={EM_CONSTRUCAO}>
@@ -103,6 +115,8 @@ export function PesquisasParceirosCard({
   acompanhamentos,
   tipos,
   hoje,
+  acompanhamentoIndisponivel,
+  acaoSemRodada,
 }: PesquisasParceirosCardProps) {
   const recentes = rodadasRecentesPublicadas(rodadas, acompanhamentos)
 
@@ -124,12 +138,14 @@ export function PesquisasParceirosCard({
             acompanhamento={acompanhamento}
             tipos={tipos}
             hoje={hoje}
+            acompanhamentoIndisponivel={acompanhamentoIndisponivel}
           />
         ) : (
           <div className={styles.aberta}>
             <EstadoVazio
               titulo="Nenhuma rodada aberta agora"
               descricao="A próxima rodada aparece aqui quando for aberta."
+              acao={acaoSemRodada}
             />
           </div>
         )}

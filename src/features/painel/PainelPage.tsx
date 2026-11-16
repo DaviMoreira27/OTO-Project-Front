@@ -5,24 +5,17 @@ import { FaixasOcupacaoCard } from './components/FaixasOcupacaoCard'
 import { FluxoTuristasCard } from './components/FluxoTuristasCard'
 import { IndicadoresResumo } from './components/IndicadoresResumo'
 import { OcupacaoMensalCard } from './components/OcupacaoMensalCard'
-import { PendenciasParceiroCard } from './components/PendenciasParceiroCard'
-import { PesquisasParceirosCard } from './components/PesquisasParceirosCard'
+import { PesquisasDoPainel } from './components/PesquisasDoPainel'
 import { PainelFiltros } from './components/PainelFiltros'
 import { TaxaOcupacaoDestaque } from './components/TaxaOcupacaoDestaque'
 import {
-  acompanhamento,
-  acompanhamentosRecentes,
   comparativo,
   feriadosExpectativa,
   feriadosRealizado,
-  hojeDoDesign,
   parametrosVigentes,
-  pendenciasParceiro,
   referencias,
   resultado,
   rhcVigente,
-  rodadaAberta,
-  rodadasRecentes,
   serieMensal,
 } from './fixtures'
 import styles from './PainelPage.module.css'
@@ -70,22 +63,9 @@ export function PainelPage() {
         <DesempenhoPorTipoCard resultado={resultado} tipos={referencias.tiposHospedagem ?? []} />
       </div>
 
-      {perfil === 'ADMIN' && (
+      {(perfil === 'ADMIN' || perfil === 'PARCEIRO') && (
         <div className={styles.pesquisas}>
-          <PesquisasParceirosCard
-            rodadaAberta={rodadaAberta}
-            acompanhamento={acompanhamento}
-            rodadas={rodadasRecentes}
-            acompanhamentos={acompanhamentosRecentes}
-            tipos={referencias.tiposHospedagem ?? []}
-            hoje={hojeDoDesign}
-          />
-        </div>
-      )}
-
-      {perfil === 'PARCEIRO' && (
-        <div className={styles.pesquisas}>
-          <PendenciasParceiroCard pendencias={pendenciasParceiro} hoje={hojeDoDesign} />
+          <PesquisasDoPainel perfil={perfil} />
         </div>
       )}
     </>
