@@ -46,10 +46,25 @@ describe('menu principal', () => {
     expect(screen.getByRole('link', { name: 'Painel' })).toHaveAttribute('aria-current', 'page')
   })
 
+  it('Pesquisas é link para o ADMIN', () => {
+    abrir()
+
+    expect(screen.getByRole('link', { name: 'Pesquisas' })).toHaveAttribute(
+      'href',
+      '/pesquisas/nova',
+    )
+  })
+
+  it('Pesquisas fica desativado para o PARCEIRO, que ainda não tem a página', () => {
+    abrir({ usuario: { nome: 'Paula', perfil: 'PARCEIRO' } })
+
+    expect(screen.getByRole('button', { name: 'Pesquisas' })).toBeDisabled()
+  })
+
   it('páginas que ainda não existem aparecem desativadas', () => {
     abrir()
 
-    for (const nome of ['Pesquisas', 'Indicadores', 'Relatórios', 'Cadastros']) {
+    for (const nome of ['Indicadores', 'Relatórios', 'Cadastros']) {
       expect(screen.getByRole('button', { name: nome })).toBeDisabled()
     }
   })

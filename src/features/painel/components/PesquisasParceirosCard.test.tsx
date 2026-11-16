@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { AuthContext, type Auth } from '@/features/auth/AuthContext'
+import { diasAte, textoDoPrazo } from '@/lib/datas'
 import type { Perfil } from '@/types/dominio'
 import {
   acompanhamento,
@@ -13,13 +14,7 @@ import {
   rodadasRecentes,
 } from '../fixtures'
 import { PainelPage } from '../PainelPage'
-import {
-  campanhaDeReferencia,
-  diasAte,
-  rodadasRecentesPublicadas,
-  textoDasFaltantes,
-  textoDoPrazo,
-} from '../pesquisas'
+import { campanhaDeReferencia, rodadasRecentesPublicadas, textoDasFaltantes } from '../pesquisas'
 import { PendenciasParceiroCard } from './PendenciasParceiroCard'
 import { PesquisasParceirosCard } from './PesquisasParceirosCard'
 

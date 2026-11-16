@@ -1,34 +1,7 @@
-import { formatarData } from '@/lib/formatos'
 import type { Esquemas } from '@/types/dominio'
 import { NOMES_NO_PLURAL } from './desempenho'
 
 type CampanhaAcompanhada = Esquemas['AcompanhamentoCampanha']
-
-function diaUtc(data: string): number | null {
-  const partes = data.match(/^(\d{4})-(\d{2})-(\d{2})/)
-  return partes ? Date.UTC(Number(partes[1]), Number(partes[2]) - 1, Number(partes[3])) : null
-}
-
-/** Compara só os dias, em UTC, para o horário de verão e o fuso não mudarem a conta. */
-export function diasAte(prazo: string, hoje: string): number | null {
-  const fim = diaUtc(prazo)
-  const inicio = diaUtc(hoje)
-  return fim === null || inicio === null ? null : Math.round((fim - inicio) / 86_400_000)
-}
-
-export function textoDosDias(prazo: string | undefined, hoje: string): string | null {
-  const dias = prazo ? diasAte(prazo, hoje) : null
-  if (dias === null) return null
-  if (dias < 0) return 'prazo encerrado'
-  if (dias === 0) return 'termina hoje'
-  return dias === 1 ? 'falta 1 dia' : `faltam ${dias} dias`
-}
-
-/** "Prazo de resposta: 09/10/2026 · faltam 4 dias" */
-export function textoDoPrazo(prazo: string | undefined, hoje: string): string {
-  const dias = textoDosDias(prazo, hoje)
-  return dias ? `Prazo de resposta: ${formatarData(prazo)} · ${dias}` : 'Sem prazo de resposta'
-}
 
 /** Uma rodada pode ter várias campanhas, e o cartão mostra uma: a que tem menos respostas. */
 export function campanhaDeReferencia(

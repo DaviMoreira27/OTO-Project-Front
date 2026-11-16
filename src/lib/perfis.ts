@@ -6,12 +6,20 @@ export type ItemMenu = {
   para?: string
   /** sem lista, aparece para todos os perfis */
   perfis?: Perfil[]
+  /** perfis que já têm a página de `para`; para os outros, o item aparece desativado */
+  perfisDaPagina?: Perfil[]
   temSubmenu?: boolean
 }
 
 export const ITENS_MENU: ItemMenu[] = [
   { rotulo: 'Painel', para: '/' },
-  { rotulo: 'Pesquisas', perfis: ['ADMIN', 'PARCEIRO'], temSubmenu: true },
+  {
+    rotulo: 'Pesquisas',
+    para: '/pesquisas/nova',
+    perfis: ['ADMIN', 'PARCEIRO'],
+    perfisDaPagina: ['ADMIN'],
+    temSubmenu: true,
+  },
   { rotulo: 'Indicadores', temSubmenu: true },
   { rotulo: 'Relatórios', temSubmenu: true },
   { rotulo: 'Cadastros', temSubmenu: true },
@@ -20,6 +28,10 @@ export const ITENS_MENU: ItemMenu[] = [
 export function itensDoPerfil(perfil: Perfil | undefined): ItemMenu[] {
   return ITENS_MENU.filter(
     (item) => !item.perfis || (perfil !== undefined && item.perfis.includes(perfil)),
+  ).map(({ perfisDaPagina, ...item }) =>
+    perfisDaPagina && !(perfil !== undefined && perfisDaPagina.includes(perfil))
+      ? { ...item, para: undefined }
+      : item,
   )
 }
 

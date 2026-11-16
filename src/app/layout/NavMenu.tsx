@@ -13,7 +13,7 @@ export function NavMenu() {
         {itensDoPerfil(usuario?.perfil).map(({ rotulo, para, temSubmenu }) => (
           <li key={rotulo} title={para ? undefined : 'Em construção'}>
             {para ? (
-              <NavLink to={para} end className={styles.link}>
+              <NavLink to={para} end={para === '/'} className={styles.link}>
                 {rotulo}
               </NavLink>
             ) : (

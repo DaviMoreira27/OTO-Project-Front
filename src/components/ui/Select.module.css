@@ -57,3 +57,38 @@
 .select:disabled + .seta {
   opacity: 0.5;
 }
+
+/* Variante de formulário: mesmo desenho dos campos de texto */
+.formulario {
+  gap: 6px;
+}
+
+.formulario .rotulo {
+  padding-left: 0;
+  color: var(--cor-texto-rotulo);
+  font: var(--tipo-rotulo-kpi);
+  text-transform: none;
+}
+
+.formulario .select {
+  height: 44px;
+  padding: 0 40px 0 var(--espaco-3);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda-botao);
+  color: var(--cor-texto);
+  font: var(--tipo-subtitulo);
+  letter-spacing: normal;
+}
+
+.formulario .select:hover:not(:disabled) {
+  background: var(--cor-superficie);
+  border-color: var(--cor-primaria);
+}
+
+.formulario .seta {
+  top: 13px;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--cor-texto-suave);
+}

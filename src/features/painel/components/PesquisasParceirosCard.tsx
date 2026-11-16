@@ -4,14 +4,10 @@ import { BarraProgresso } from '@/components/ui/BarraProgresso'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EstadoVazio } from '@/components/ui/EstadoVazio'
+import { textoDoPrazo } from '@/lib/datas'
 import { formatarData, formatarInteiro, formatarPercentual } from '@/lib/formatos'
 import type { Esquemas } from '@/types/dominio'
-import {
-  campanhaDeReferencia,
-  rodadasRecentesPublicadas,
-  textoDasFaltantes,
-  textoDoPrazo,
-} from '../pesquisas'
+import { campanhaDeReferencia, rodadasRecentesPublicadas, textoDasFaltantes } from '../pesquisas'
 import styles from './PesquisasParceirosCard.module.css'
 
 type PesquisasParceirosCardProps = {
