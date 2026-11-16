@@ -5,7 +5,7 @@ Interface web do **Observatório de Turismo de Olímpia (OTO)**. Reúne, em um p
 A API fica no repositório [OTO-Project](https://github.com/pedrob21/OTO-Project) (Spring Boot e PostgreSQL).
 
 > [!IMPORTANT]
-> **Em desenvolvimento.** O login e a sessão já usam a API. Os blocos do painel ainda mostram dados fixos ([`fixtures.ts`](src/features/painel/fixtures.ts)), e a integração é a [próxima etapa](#próximas-tasks).
+> **Em desenvolvimento.** O login, a criação de pesquisas e o cartão "Pesquisas com os parceiros" já usam a API. Os demais blocos do painel ainda mostram dados fixos ([`fixtures.ts`](src/features/painel/fixtures.ts)), e a integração deles é a [próxima etapa](#próximas-tasks).
 
 ## Sumário
 
@@ -25,14 +25,15 @@ A API fica no repositório [OTO-Project](https://github.com/pedrob21/OTO-Project
 
 - Login com JWT, expiração de sessão e controle de acesso por perfil
 - Cabeçalho, menu, rodapé, e cabeçalho e filtros fixos durante a rolagem
-- Painel de indicadores, com dados fixos:
+- Criação de pesquisa com campanhas (modalidade, período, diárias e prazo), só para o ADMIN, em `/pesquisas/nova`
+- Painel de indicadores, com dados fixos, exceto as pesquisas:
   - filtros de campanha, comparação e tipo de hospedagem, guardados na URL
   - destaque da taxa de ocupação e indicadores de resumo
   - taxa de ocupação mensal em gráfico e tabela
   - faixas de ocupação e fluxo estimado de turistas
   - expectativa × realizado nos feriados
   - desempenho por tipo de hospedagem, com ocultação por sigilo
-  - pesquisas com os parceiros
+  - pesquisas com os parceiros, com dados da API
 
 **O que cada perfil vê no cartão de pesquisas**
 

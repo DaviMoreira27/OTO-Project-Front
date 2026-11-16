@@ -129,7 +129,9 @@ describe('login', () => {
     expect(router.state.location.pathname).toBe('/')
     expect(lerToken()).toBe('novo')
     // os dados do usuário vêm do login: não precisa chamar /api/me
-    expect(fetchFalso).toHaveBeenCalledOnce()
+    const caminhos = fetchFalso.mock.calls.map(([url]) => new URL(String(url)).pathname)
+    expect(caminhos[0]).toBe('/api/auth/login')
+    expect(caminhos).not.toContain('/api/me')
   })
 
   it('senha errada mostra a mensagem da API e continua no login', async () => {

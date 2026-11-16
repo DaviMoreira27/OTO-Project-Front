@@ -24,7 +24,8 @@ export function textoDasFaltantes(
   campanha: CampanhaAcompanhada,
   tipos: Esquemas['TipoRef'][],
 ): string {
-  const faltam = (campanha.qtdMh ?? 0) - (campanha.qtdRespondentes ?? 0)
+  if (!campanha.qtdMh) return 'Ainda não há meios de hospedagem cadastrados para responder.'
+  const faltam = campanha.qtdMh - (campanha.qtdRespondentes ?? 0)
   if (faltam <= 0) return 'Todos os meios de hospedagem responderam.'
 
   const porTipo = new Map<string, number>()
@@ -49,20 +50,39 @@ export type RodadaRecente = {
   campanha: CampanhaAcompanhada | undefined
 }
 
+/** A rodada aberta que o cartão mostra. Com mais de uma, a de prazo mais próximo. */
+export function rodadaAbertaAtual(
+  rodadas: Esquemas['RodadaResponse'][],
+): Esquemas['RodadaResponse'] | undefined {
+  return rodadas
+    .filter((rodada) => rodada.status === 'ABERTA')
+    .toSorted((a, b) => (a.prazoResposta ?? '9999').localeCompare(b.prazoResposta ?? '9999'))[0]
+}
+
+function ultimasPublicadas(rodadas: Esquemas['RodadaResponse'][], limite: number) {
+  return rodadas
+    .flatMap(({ id, codigo, titulo, campanhas = [] }) => {
+      const datas = campanhas.flatMap(({ publicadaEm }) => publicadaEm ?? [])
+      const publicadaEm = datas.sort().at(-1)
+      return publicadaEm ? [{ id, codigo, titulo, publicadaEm }] : []
+    })
+    .sort((a, b) => b.publicadaEm.localeCompare(a.publicadaEm))
+    .slice(0, limite)
+}
+
+/** Ids das rodadas recentes, para buscar só o acompanhamento delas. */
+export function idsRecentesPublicadas(rodadas: Esquemas['RodadaResponse'][], limite = 3): number[] {
+  return ultimasPublicadas(rodadas, limite).flatMap(({ id }) => (id === undefined ? [] : [id]))
+}
+
 /** As últimas rodadas com campanha publicada, da mais recente para a mais antiga. */
 export function rodadasRecentesPublicadas(
   rodadas: Esquemas['RodadaResponse'][],
   acompanhamentos: Esquemas['AcompanhamentoResponse'][],
   limite = 3,
 ): RodadaRecente[] {
-  return rodadas
-    .flatMap(({ id, codigo, titulo, campanhas = [] }) => {
-      const datas = campanhas.flatMap(({ publicadaEm }) => publicadaEm ?? [])
-      const publicadaEm = datas.sort().at(-1)
-      if (!publicadaEm) return []
-      const acompanhamento = acompanhamentos.find((item) => item.rodadaId === id)
-      return [{ id, codigo, titulo, publicadaEm, campanha: campanhaDeReferencia(acompanhamento) }]
-    })
-    .sort((a, b) => b.publicadaEm.localeCompare(a.publicadaEm))
-    .slice(0, limite)
+  return ultimasPublicadas(rodadas, limite).map((rodada) => ({
+    ...rodada,
+    campanha: campanhaDeReferencia(acompanhamentos.find((item) => item.rodadaId === rodada.id)),
+  }))
 }
