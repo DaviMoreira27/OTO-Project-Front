@@ -9,11 +9,13 @@ import {
   type CampanhaRascunho,
   type Feriado,
   MODALIDADES,
+  OPCOES_DE_MES,
   TIPOS_DE_PERIODO,
   diariasDaCampanha,
   diasDaCampanha,
   nomeDaCampanha,
   nomeSugerido,
+  opcoesDeAno,
 } from '../campanhas'
 import type { AcaoPesquisa } from '../estado'
 import { MENSAGEM_REPETIDA, errosDaCampanha, idDoCampo } from '../validacao'
@@ -32,6 +34,8 @@ type CampanhaCamposProps = {
   podeRemover: boolean
   erroApi?: string
   focar: boolean
+  /** para montar a lista de anos do campo de mês */
+  anoAtual: number
   despachar: Dispatch<AcaoPesquisa>
 }
 
@@ -47,6 +51,7 @@ export const CampanhaCampos = memo(function CampanhaCampos({
   podeRemover,
   erroApi,
   focar,
+  anoAtual,
   despachar,
 }: CampanhaCamposProps) {
   const [tocados, setTocados] = useState<Record<string, true>>({})
@@ -71,6 +76,7 @@ export const CampanhaCampos = memo(function CampanhaCampos({
     despachar({ tipo: 'campanha', chave, mudancas })
   const id = (campo: string) => idDoCampo(`${chave}.${campo}`)
 
+  const [anoDoMes = '', numeroDoMes = ''] = campanha.mes.split('-')
   const dias = diasDaCampanha(campanha)
   const sugestao = nomeSugerido(campanha, feriados)
   const nomeEditado = campanha.nome !== null && campanha.nome !== sugestao
@@ -133,16 +139,34 @@ export const CampanhaCampos = memo(function CampanhaCampos({
 
         {campanha.tipoPeriodo === 'MENSAL' ? (
           <div className={styles.linha}>
-            <CampoTexto
+            {/* Dois selects em vez de type="month", que o Firefox mostra como texto livre. */}
+            <Select
               id={id('mes')}
               className={styles.campoMes}
+              variante="campo"
               rotulo="Mês"
-              type="month"
-              value={campanha.mes}
-              onChange={(evento) => mudar({ mes: evento.target.value })}
+              valor={numeroDoMes}
+              opcoes={OPCOES_DE_MES}
+              aoMudar={(mes) => mudar({ mes: `${anoDoMes}-${mes}` })}
               onBlur={tocar('mes')}
-              erro={erroDe('mes')}
+              aria-invalid={erroDe('mes') ? true : undefined}
+              aria-describedby={erroDe('mes') ? `${id('mes')}-erro` : undefined}
             />
+            <Select
+              id={id('ano')}
+              className={styles.campoAno}
+              variante="campo"
+              rotulo="Ano"
+              valor={anoDoMes}
+              opcoes={opcoesDeAno(anoAtual, Number(anoDoMes) || undefined)}
+              aoMudar={(ano) => mudar({ mes: `${ano}-${numeroDoMes}` })}
+              onBlur={tocar('mes')}
+            />
+            {erroDe('mes') && (
+              <p id={`${id('mes')}-erro`} className={styles.erroSolto}>
+                {erroDe('mes')}
+              </p>
+            )}
           </div>
         ) : (
           <div className={styles.linha}>

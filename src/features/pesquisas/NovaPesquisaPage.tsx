@@ -312,6 +312,7 @@ export function NovaPesquisaPage({ hoje: hojeFixo }: NovaPesquisaPageProps) {
                     podeRemover={campanhas.length > 1}
                     erroApi={erroDaCampanha === campanha.chave ? falha?.message : undefined}
                     focar={estado.adicionada === campanha.chave}
+                    anoAtual={Number(hoje.slice(0, 4))}
                     despachar={despachar}
                   />
                 ))}

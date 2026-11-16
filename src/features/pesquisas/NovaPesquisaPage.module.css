@@ -160,7 +160,11 @@ fieldset.camposCampanha {
 }
 
 .campoMes {
-  width: 220px;
+  width: 200px;
+}
+
+.campoAno {
+  width: 120px;
 }
 
 .campoFeriado {
