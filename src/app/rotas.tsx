@@ -11,7 +11,21 @@ export const rotas: RouteObject[] = [
     children: [
       {
         element: <AppLayout />,
-        children: [{ path: '/', element: <PainelPage /> }],
+        children: [
+          { path: '/', element: <PainelPage /> },
+          {
+            element: <RequirePerfil perfis={['ADMIN']} />,
+            children: [
+              {
+                path: '/pesquisas/nova',
+                lazy: async () => ({
+                  Component: (await import('@/features/pesquisas/NovaPesquisaPage'))
+                    .NovaPesquisaPage,
+                }),
+              },
+            ],
+          },
+        ],
       },
     ],
   },

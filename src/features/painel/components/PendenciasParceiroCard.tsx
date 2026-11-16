@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import { EstadoVazio } from '@/components/ui/EstadoVazio'
 import type { Esquemas } from '@/types/dominio'
-import { textoDoPrazo } from '../pesquisas'
+import { textoDoPrazo } from '@/lib/datas'
 import styles from './PesquisasParceirosCard.module.css'
 
 type PendenciasParceiroCardProps = {

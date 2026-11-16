@@ -54,3 +54,28 @@
   outline: 2px solid var(--cor-primaria);
   outline-offset: 2px;
 }
+
+.comRotulo {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legendaVisivel {
+  float: left;
+  padding: 0;
+  color: var(--cor-texto-rotulo);
+  font: var(--tipo-rotulo-kpi);
+}
+
+.comRotulo .grupo {
+  margin: 0;
+}
+
+.comRotulo:disabled .opcao,
+.comRotulo:disabled .radio {
+  cursor: not-allowed;
+}

@@ -12,15 +12,27 @@ type SelectProps = Omit<
   valor: string
   opcoes: OpcaoSelect[]
   aoMudar: (valor: string) => void
+  /** `campo`: branco, como os campos de texto dos formulários */
+  variante?: 'destaque' | 'campo'
 }
 
 /** Select nativo: teclado, leitor de tela e celular funcionam sem código extra. */
-export function Select({ rotulo, valor, opcoes, aoMudar, className, id, ...props }: SelectProps) {
+export function Select({
+  rotulo,
+  valor,
+  opcoes,
+  aoMudar,
+  variante = 'destaque',
+  className,
+  id,
+  ...props
+}: SelectProps) {
   const idGerado = useId()
   const idSelect = id ?? idGerado
+  const classes = [styles.campo, variante === 'campo' && styles.formulario, className]
 
   return (
-    <div className={className ? `${styles.campo} ${className}` : styles.campo}>
+    <div className={classes.filter(Boolean).join(' ')}>
       <label htmlFor={idSelect} className={styles.rotulo}>
         {rotulo}
       </label>
