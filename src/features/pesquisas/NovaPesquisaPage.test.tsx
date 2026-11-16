@@ -73,7 +73,8 @@ describe('NovaPesquisaPage', () => {
     abrir()
 
     expect(await screen.findByDisplayValue('018/26')).toBeInTheDocument()
-    expect(screen.getByLabelText('Mês')).toHaveValue('2026-10')
+    expect(screen.getByLabelText('Mês')).toHaveValue('10')
+    expect(screen.getByLabelText('Ano')).toHaveValue('2026')
     expect(screen.getByLabelText('Diárias')).toHaveValue(31)
     expect(screen.getByLabelText('Nome da campanha')).toHaveValue('Consolidada de outubro de 2026')
     expect(screen.getByText('Rodada 018/26')).toBeInTheDocument()
@@ -201,6 +202,20 @@ describe('NovaPesquisaPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Remover a campanha 2' }))
     expect(screen.queryByRole('heading', { name: 'Campanha 2' })).not.toBeInTheDocument()
+  })
+
+  it('mês e ano são selects, que funcionam em qualquer navegador', async () => {
+    abrir()
+    await screen.findByDisplayValue('018/26')
+
+    await userEvent.selectOptions(screen.getByLabelText('Mês'), '02')
+    await userEvent.selectOptions(screen.getByLabelText('Ano'), '2024')
+
+    expect(screen.getByLabelText('Mês')).toHaveDisplayValue('Fevereiro')
+    expect(screen.getByLabelText('Diárias')).toHaveValue(29)
+    expect(screen.getByLabelText('Nome da campanha')).toHaveValue(
+      'Consolidada de fevereiro de 2024',
+    )
   })
 
   it('diárias acima do período mostram o limite ao sair do campo', async () => {

@@ -1,5 +1,5 @@
 import { diasDoPeriodo, mesAnterior, periodoDoMes } from '@/lib/datas'
-import { formatarMes } from '@/lib/formatos'
+import { capitalizar, formatarMes } from '@/lib/formatos'
 import type { Esquemas } from '@/types/dominio'
 
 export type Modalidade = Esquemas['DadosCampanha']['modalidade']
@@ -29,6 +29,20 @@ export const TIPOS_DE_PERIODO: { valor: TipoPeriodo; rotulo: string }[] = [
   { valor: 'MENSAL', rotulo: 'Mensal' },
   { valor: 'FERIADO', rotulo: 'Feriado' },
 ]
+
+/** Janeiro a dezembro, com o valor de dois dígitos usado em "AAAA-MM". */
+export const OPCOES_DE_MES = Array.from({ length: 12 }, (_, indice) => ({
+  valor: String(indice + 1).padStart(2, '0'),
+  rotulo: capitalizar(formatarMes(indice + 1)),
+}))
+
+/** Três anos para trás (consolidadas) e um para a frente (expectativas), mais o já escolhido. */
+export function opcoesDeAno(anoAtual: number, anoEscolhido?: number) {
+  const anos = new Set<number>()
+  for (let ano = anoAtual - 3; ano <= anoAtual + 1; ano++) anos.add(ano)
+  if (anoEscolhido) anos.add(anoEscolhido)
+  return [...anos].sort((a, b) => a - b).map((ano) => ({ valor: String(ano), rotulo: String(ano) }))
+}
 
 /**
  * A primeira campanha é a consolidada do mês anterior, a coleta mais comum. As seguintes começam

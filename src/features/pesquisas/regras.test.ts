@@ -5,6 +5,8 @@ import {
   diariasDaCampanha,
   nomeSugerido,
   novaCampanha,
+  OPCOES_DE_MES,
+  opcoesDeAno,
   paraDadosCampanha,
 } from './campanhas'
 import { sugerirCodigo } from './codigo'
@@ -68,6 +70,24 @@ describe('campanhas', () => {
       periodoFim: '2027-02-09',
       qtdDiarias: 5,
     })
+  })
+})
+
+describe('opções de mês e ano', () => {
+  it('doze meses com o valor de dois dígitos', () => {
+    expect(OPCOES_DE_MES).toHaveLength(12)
+    expect(OPCOES_DE_MES[1]).toEqual({ valor: '02', rotulo: 'Fevereiro' })
+  })
+
+  it('três anos para trás, um para a frente e o já escolhido', () => {
+    expect(opcoesDeAno(2026).map((opcao) => opcao.valor)).toEqual([
+      '2023',
+      '2024',
+      '2025',
+      '2026',
+      '2027',
+    ])
+    expect(opcoesDeAno(2026, 2019).map((opcao) => opcao.valor)[0]).toBe('2019')
   })
 })
 
